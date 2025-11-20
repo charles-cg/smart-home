@@ -9,7 +9,7 @@ class HumidityRepository:
         self.config={
             "host":"localhost",
             "user":"root",
-            "password":"Nihon2016*",
+            "password":"Ccg2004-ccg", #change pw depending on user
             "database":"smartHomeDb",
             "port":3306
         }
