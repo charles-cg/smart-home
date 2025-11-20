@@ -3,14 +3,14 @@ import mysql.connector
 from mysql.connector import Error
 
 
-class HumidityRepository:
+class SmokeRepository:
 
     def __init__(self):
         self.config={
             "host":"localhost",
             "user":"root",
-            "password":"Ccg2004-ccg", #change pw depending on user
-            "database":"smartHomeDb",
+            "password":"Nihon2016*",
+            "database":"smartHomeDB",
             "port":3306
         }
     
@@ -18,16 +18,16 @@ class HumidityRepository:
         """Crea y devuelve una conexion a la db"""
         return mysql.connector.connect(**self.config)
     
-    def insert_data(self, humidity):
+    def insert_data(self, smoke):
         """Método que inserta un alumno a la db"""
         try:
             connection = self.get_connection()
             cursor = connection.cursor()
-            query= "INSERT INTO humidity (humidity,date) VALUES (%s,%s)"
-            cursor.execute(query,(humidity,datetime.now()))
+            query= "INSERT INTO smoke (smoke,date) VALUES (%s,%s)"
+            cursor.execute(query,(smoke,datetime.now()))
             connection.commit()
         except Error as e:
-            print(f"Error inserting humidity data: {e}")   
+            print(f"Error inserting smoke data: {e}")   
         finally:
             if connection.is_connected():
                 cursor.close()
@@ -38,7 +38,7 @@ class HumidityRepository:
         try:
             connection = self.get_connection()
             cursor= connection.cursor()
-            query= "SELECT * FROM humidity"
+            query= "SELECT * FROM smoke"
             cursor.execute(query)
             values_raw = cursor.fetchall()
             for value_raw in values_raw:
@@ -49,7 +49,7 @@ class HumidityRepository:
                 })
             return values
         except Error as e:
-            print(f"Error obtaining humidity data: {e}")
+            print(f"Error obtaining smoke data: {e}")
             return values
         finally:
             if connection.is_connected():
