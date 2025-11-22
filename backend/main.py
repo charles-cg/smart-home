@@ -25,6 +25,7 @@ app = FastAPI()
 
 
 origins = [
+    "http://localhost:3000",
     "http://localhost:8000",
 ]
 
@@ -109,9 +110,9 @@ def get_temperature()->list[TemperatureDTO]:
 
 """Pressure"""
 @app.post("/pressure/create")
-def create_distance(dto:CreatePressureRequest):
-    distance_repository = PressureRepository()
-    distance_repository.insert_data(dto.pressure)
+def create_pressure(dto:CreatePressureRequest):
+    pressure_repository = PressureRepository()
+    pressure_repository.insert_data(dto.pressure)
     return {"message":"Data inserted"}
     
 @app.get("/pressure/list")

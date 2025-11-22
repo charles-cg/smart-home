@@ -1,14 +1,14 @@
-"use client";
-
+import React from "react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import {
-  AreaChart,
-  Area,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
 } from "recharts";
 
 interface HumidityDTO {
@@ -17,12 +17,12 @@ interface HumidityDTO {
   date: string;
 }
 
-export default function Home() {
+const HumidityApi = () => {
   const [data, setData] = useState<HumidityDTO[]>([]);
   const [humidity, setHumidity] = useState<number>(0);
 
   async function getHumidity() {
-    const resp = (await axios.get("http://localhost:8000/humedad/list")).data;
+    const resp = (await axios.get("http://localhost:8000/humidity/list")).data;
     console.log(resp);
     setData(resp);
   }
@@ -35,56 +35,42 @@ export default function Home() {
   }, []);
 
   async function saveHumidity() {
-    const newHumidity = { humidity: humidity};
-    await axios.post("http://localhost:8000/humedad/create", newHumidity);
+    const newHumidity = { humidity: humidity };
+    await axios.post("http://localhost:8000/humidity/create", newHumidity);
   }
-
   return (
-    <div className="flex flex-col gap-8 min-h-screen justify-center items-center">
-      <h1>Hello world</h1>
-      <AreaChart
+    <div>
+      <LineChart
         style={{
           width: "100%",
           maxWidth: "700px",
+          height: "100%",
           maxHeight: "70vh",
           aspectRatio: 1.618,
         }}
         responsive
         data={data}
         margin={{
-          top: 20,
+          top: 5,
           right: 0,
           left: 0,
-          bottom: 0,
+          bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="fecha" />
+        <XAxis dataKey="date" />
         <YAxis width="auto" />
         <Tooltip />
-        <Area
+        <Legend />
+        <Line
           type="monotone"
-          dataKey="humedad"
+          dataKey="humidity"
           stroke="#8884d8"
-          fill="#8884d8"
+          activeDot={{ r: 8 }}
         />
-      </AreaChart>
-      <button
-        className="text-white cursor-pointer bg-blue-700 p-4 rounded-2xl"
-        onClick={obtenerHumedades}
-      >
-        Consultar
-      </button>
-      <input
-        type="number"
-        onChange={(e) => setHumedad(Number(e.target.value))}
-      ></input>
-      <button
-        className="text-white cursor-pointer bg-green-700 p-4 rounded-2xl"
-        onClick={saveHumedad}
-      >
-        Guardar
-      </button>
+      </LineChart>
     </div>
   );
-}
+};
+
+export default HumidityApi;
