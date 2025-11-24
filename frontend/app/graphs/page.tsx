@@ -1,7 +1,11 @@
-"use client";
 import React from 'react'
 import Link from "next/link";
 import HumidityApi from './components/HumidityApi';
+import PressureApi from './components/PressureApi';
+import TemperatureApi from './components/TemperatureApi';
+import LightApi from './components/LightApi';
+import DistanceApi from './components/DistanceApi';
+import SmokeApi from './components/SmokeApi';
 
 const GraphPage = () => {
   return (
@@ -91,11 +95,59 @@ const GraphPage = () => {
           </button>
         </div>
       </div>
-      <div>
-          <HumidityApi />
+      <div className="flex w-full flex-col">
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 ml-20 mt-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title">House Temperature</h2>
+            </div>
+            <TemperatureApi />
+          </div>
+          <div className="divider divider-horizontal mt-4 mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 mr-20 mt-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <p className="card-title">Daylight</p>
+            </div>
+            <LightApi />
+          </div>
         </div>
+        <div className="divider mx-4 opacity-0"></div>
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 ml-20 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title">Smoke</h2>
+            </div>
+            <SmokeApi />
+          </div>
+          <div className="divider divider-horizontal mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 mr-20 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title">Distance</h2>
+            </div>
+            <DistanceApi />
+          </div>
+        </div>
+        <div className='divider mx-4 opacity-0'></div>
+                <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 ml-20 mb-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title">Pressure</h2>
+            </div>
+            <PressureApi />
+          </div>
+          <div className="divider divider-horizontal mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 mr-20 mb-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title">Wine Cellar Humidity</h2>
+            </div>
+            <HumidityApi />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default GraphPage
+
+          

@@ -27,11 +27,12 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Development: accept requests from phone (IP-based origin)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -116,7 +117,7 @@ def create_pressure(dto:CreatePressureRequest):
     return {"message":"Data inserted"}
     
 @app.get("/pressure/list")
-def get_pressure()->list[DistanceDTO]:
-    pressure_repository = DistanceRepository()
+def get_pressure()->list[PressureDTO]:
+    pressure_repository = PressureRepository()
     response = pressure_repository.get_data()
     return response

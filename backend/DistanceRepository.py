@@ -9,7 +9,7 @@ class DistanceRepository:
         self.config={
             "host":"localhost",
             "user":"root",
-            "password":"Nihon2016*",
+            "password":"Ccg2004-ccg",
             "database":"smartHomeDB",
             "port":3306
         }
@@ -19,7 +19,7 @@ class DistanceRepository:
         return mysql.connector.connect(**self.config)
     
     def insert_data(self, distance):
-        """Método que inserta un alumno a la db"""
+        """Método que inserta una distancia a la db"""
         try:
             connection = self.get_connection()
             cursor = connection.cursor()

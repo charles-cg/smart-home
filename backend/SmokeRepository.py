@@ -9,7 +9,7 @@ class SmokeRepository:
         self.config={
             "host":"localhost",
             "user":"root",
-            "password":"Nihon2016*",
+            "password":"Ccg2004-ccg",
             "database":"smartHomeDB",
             "port":3306
         }
@@ -44,7 +44,7 @@ class SmokeRepository:
             for value_raw in values_raw:
                 values.append({
                     "id":value_raw[0],
-                    "humidity":value_raw[1],
+                    "smoke":value_raw[1],
                     "date":value_raw[2]
                 })
             return values

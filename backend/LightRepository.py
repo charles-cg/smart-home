@@ -9,7 +9,7 @@ class LightRepository:
         self.config={
             "host":"localhost",
             "user":"root",
-            "password":"Nihon2016*",
+            "password":"Ccg2004-ccg",
             "database":"smartHomeDB",
             "port":3306
         }

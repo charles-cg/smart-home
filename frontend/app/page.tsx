@@ -1,90 +1,140 @@
-"use client";
-
-import axios from "axios";
-import { useEffect, useState } from "react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
-
-interface HumidityDTO {
-  id: number;
-  humidity: number;
-  date: string;
-}
+import Image from "next/image";
+import Link from "next/link";
+import TemperatureText from "./components/TemperatureText";
+import LightText from "./components/LightText";
+import HumidityText from "./components/HumidityText";
+import DistanceText from "./components/DistanceText";
+import SmokeText from "./components/SmokeText";
+import PressureText from "./components/PressureText";
 
 export default function Home() {
-  const [data, setData] = useState<HumidityDTO[]>([]);
-  const [humidity, setHumidity] = useState<number>(0);
-
-  async function getHumidity() {
-    const resp = (await axios.get("http://localhost:8000/humedad/list")).data;
-    console.log(resp);
-    setData(resp);
-  }
-
-  useEffect(() => {
-    console.log("Component has been set");
-    setInterval(() => {
-      getHumidity();
-    }, 2000);
-  }, []);
-
-  async function saveHumidity() {
-    const newHumidity = { humidity: humidity};
-    await axios.post("http://localhost:8000/humedad/create", newHumidity);
-  }
-
   return (
-    <div className="flex flex-col gap-8 min-h-screen justify-center items-center">
-      <h1>Hello world</h1>
-      <AreaChart
-        style={{
-          width: "100%",
-          maxWidth: "700px",
-          maxHeight: "70vh",
-          aspectRatio: 1.618,
-        }}
-        responsive
-        data={data}
-        margin={{
-          top: 20,
-          right: 0,
-          left: 0,
-          bottom: 0,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="fecha" />
-        <YAxis width="auto" />
-        <Tooltip />
-        <Area
-          type="monotone"
-          dataKey="humedad"
-          stroke="#8884d8"
-          fill="#8884d8"
-        />
-      </AreaChart>
-      <button
-        className="text-white cursor-pointer bg-blue-700 p-4 rounded-2xl"
-        onClick={obtenerHumedades}
-      >
-        Consultar
-      </button>
-      <input
-        type="number"
-        onChange={(e) => setHumedad(Number(e.target.value))}
-      ></input>
-      <button
-        className="text-white cursor-pointer bg-green-700 p-4 rounded-2xl"
-        onClick={saveHumedad}
-      >
-        Guardar
-      </button>
-    </div>
-  );
+    <main>
+<div className="navbar bg-base-100 shadow-sm">
+  <div className="navbar-start">
+    <ul className="menu menu-horizontal bg-base-200 rounded-box">
+  <li>
+    <a>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      </svg>
+    </a>
+  </li>
+  <li>
+    <a>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </a>
+  </li>
+  <li>
+    <Link href="/graphs">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+      </svg>
+    </Link>
+  </li>
+</ul>
+  </div>
+  <div className="navbar-center">
+    <a className="btn btn-ghost text-xl">Smart Home</a>
+  </div>
+  <div className="navbar-end">
+    <button className="btn btn-ghost btn-circle">
+      <div className="indicator">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /> </svg>
+        <span className="badge badge-xs badge-primary indicator-item"></span>
+      </div>
+    </button>
+  </div>
+</div>
+      <div className="flex w-full flex-col">
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 ml-20 mt-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">House Temperature</h2>
+            </div>
+            <div className="card-body items-center">
+              <TemperatureText />
+            </div>
+          </div>
+          <div className="divider divider-horizontal mt-4 mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mt-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">Daylight</h2>
+            </div>
+            <div className="card-body items-center">
+              <LightText />
+            </div>
+          </div>
+          <div className="divider divider-horizontal mt-4 mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mr-20 mt-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">Smoke</h2>
+            </div>
+            <div className="card-body items-center">
+              <SmokeText />
+            </div>
+          </div>
+        </div>
+        <div className="divider mx-4 opacity-0"></div>
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 ml-20 mb-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">Distance</h2>
+            </div>
+            <div className="card-body items-center">
+              <DistanceText />
+            </div>
+          </div>
+          <div className="divider divider-horizontal mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mb-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">Pressure</h2>
+            </div>
+            <div className="card-body items-center">
+              <PressureText />
+            </div>
+          </div>
+          <div className="divider divider-horizontal mt-4 mb-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mr-20 mb-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">Wine Cellar Humidity</h2>
+            </div>
+            <div className="card-body items-center">
+              <HumidityText />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+  )
 }
