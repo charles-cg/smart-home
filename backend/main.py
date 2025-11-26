@@ -1,5 +1,6 @@
 from typing import Union
 import threading
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,17 +27,16 @@ from PressureRepository import PressureRepository
 from RainDTOs import CreateRainRequest, RainDTO
 from RainRepository import RainRepository
 
-app = FastAPI()
-
-# Initialize MQTT client on startup
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     """Initialize MQTT client when app starts"""
     print("🚀 Starting MQTT listener in background thread...")
     mqtt_thread = threading.Thread(target=mqtt_run, daemon=True)
     mqtt_thread.start()
     print("✓ MQTT thread started")
+    yield
 
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:3000",
