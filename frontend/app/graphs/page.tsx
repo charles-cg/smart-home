@@ -6,6 +6,7 @@ import TemperatureApi from './components/TemperatureApi';
 import LightApi from './components/LightApi';
 import DistanceApi from './components/DistanceApi';
 import SmokeApi from './components/SmokeApi';
+import RainApi from './components/RainApi';
 
 const GraphPage = () => {
   return (
@@ -128,21 +129,33 @@ const GraphPage = () => {
           </div>
         </div>
         <div className='divider mx-4 opacity-0'></div>
-                <div className="flex w-full">
-          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 ml-20 mb-10 shadow-sm overflow-visible">
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 ml-20 shadow-sm overflow-visible">
             <div className="card-body">
               <h2 className="card-title">Pressure</h2>
             </div>
             <PressureApi />
           </div>
           <div className="divider divider-horizontal mb-4 opacity-0"></div>
-          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 mr-20 mb-10 shadow-sm overflow-visible">
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 mr-20 shadow-sm overflow-visible">
             <div className="card-body">
               <h2 className="card-title">Wine Cellar Humidity</h2>
             </div>
             <HumidityApi />
           </div>
         </div>
+        <div className='divider mx-4 opacity-0'></div>
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[500px] w-1/2 p-2 ml-20 mb-10 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title">Rain</h2>
+            </div>
+            <RainApi />
+          </div>
+        <div className="divider divider-horizontal mb-4 opacity-0"></div>
+        <div className="min-h-[500px] w-1/2 p-2 ml-20 mb-10 overflow-visible"></div>
+        </div>
+
       </div>
     </div>
   );

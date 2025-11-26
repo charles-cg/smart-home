@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from HumidityDTOs import CreateHumidityRequest, HumidityDTO
 from HumidityRepository import HumidityRepository
-from MqttClient import initialize_mqtt
+from MqttClient import run as mqtt_run
 
 from SmokeDTOs import CreateSmokeRequest, SmokeDTO
 from SmokeRepository import SmokeRepository
@@ -23,15 +23,19 @@ from TemperatureRepository import TemperatureRepository
 from PressureDTOs import CreatePressureRequest, PressureDTO
 from PressureRepository import PressureRepository
 
+from RainDTOs import CreateRainRequest, RainDTO
+from RainRepository import RainRepository
+
 app = FastAPI()
 
 # Initialize MQTT client on startup
 @app.on_event("startup")
 async def startup_event():
     """Initialize MQTT client when app starts"""
-    print("Starting MQTT client...")
-    mqtt_thread = threading.Thread(target=initialize_mqtt, daemon=True)
+    print("🚀 Starting MQTT listener in background thread...")
+    mqtt_thread = threading.Thread(target=mqtt_run, daemon=True)
     mqtt_thread.start()
+    print("✓ MQTT thread started")
 
 
 origins = [
@@ -42,7 +46,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Development: accept requests from phone (IP-based origin)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -130,4 +134,17 @@ def create_pressure(dto:CreatePressureRequest):
 def get_pressure()->list[PressureDTO]:
     pressure_repository = PressureRepository()
     response = pressure_repository.get_data()
+    return response
+
+"""Rain"""
+@app.post("/rain/create")
+def create_rain(dto:CreateRainRequest):
+    rain_repository = RainRepository()
+    rain_repository.insert_data(dto.rain)
+    return {"message":"Data inserted"}
+    
+@app.get("/rain/list")
+def get_rain()->list[RainDTO]:
+    rain_repository = RainRepository()
+    response = rain_repository.get_data()
     return response

@@ -6,6 +6,7 @@ import HumidityText from "./components/HumidityText";
 import DistanceText from "./components/DistanceText";
 import SmokeText from "./components/SmokeText";
 import PressureText from "./components/PressureText";
+import RainText from "./components/RainText";
 
 export default function Home() {
   return (
@@ -106,7 +107,7 @@ export default function Home() {
         </div>
         <div className="divider mx-4 opacity-0"></div>
         <div className="flex w-full">
-          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 ml-20 mb-10 shadow-sm overflow-visible">
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 ml-20 shadow-sm overflow-visible">
             <div className="card-body">
               <h2 className="card-title text-2xl">Distance</h2>
             </div>
@@ -114,8 +115,8 @@ export default function Home() {
               <DistanceText />
             </div>
           </div>
-          <div className="divider divider-horizontal mb-4 opacity-0"></div>
-          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mb-10 shadow-sm overflow-visible">
+          <div className="divider divider-horizontal opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 shadow-sm overflow-visible">
             <div className="card-body">
               <h2 className="card-title text-2xl">Pressure</h2>
             </div>
@@ -123,14 +124,31 @@ export default function Home() {
               <PressureText />
             </div>
           </div>
-          <div className="divider divider-horizontal mt-4 mb-4 opacity-0"></div>
-          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mr-20 mb-10 shadow-sm overflow-visible">
+          <div className="divider divider-horizontal mt-4 opacity-0"></div>
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 mr-20 shadow-sm overflow-visible">
             <div className="card-body">
               <h2 className="card-title text-2xl">Wine Cellar Humidity</h2>
             </div>
             <div className="card-body items-center">
               <HumidityText />
             </div>
+          </div>
+        </div>
+        <div className="divider mx-4 opacity-0"></div>
+        <div className="flex w-full">
+          <div className="card bg-base-300 rounded-box min-h-[300px] w-1/3 p-2 ml-20 mr-20 shadow-sm overflow-visible">
+            <div className="card-body">
+              <h2 className="card-title text-2xl">Rain</h2>
+            </div>
+            <div className="card-body items-center">
+              <RainText />
+            </div>
+          </div>
+          <div className="divider divider-horizontal mb-4 opacity-0"></div>
+          <div className="min-h-[300px] w-1/3 p-2 overflow-visible">
+          </div>
+          <div className="divider divider-horizontal mt-4 mb-4 opacity-0"></div>
+          <div className="min-h-[300px] w-1/3 p-2 mr-20overflow-visible">
           </div>
         </div>
       </div>

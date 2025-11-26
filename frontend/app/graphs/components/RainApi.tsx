@@ -14,43 +14,43 @@ import {
   Label,
 } from "recharts";
 
-interface DistanceDTO {
+interface RainDTO {
   id: number;
-  distance: number;
+  rain: number;
   date: string;
 }
 
-const DistanceApi = () => {
-  const [data, setData] = useState<DistanceDTO[]>([]);
-  const [distance, setDistance] = useState<number>(0);
+const RainApi = () => {
+  const [data, setData] = useState<RainDTO[]>([]);
+  const [rain, setRain] = useState<number>(0);
   const [error, setError] = useState<string | null>(null);
 
-  async function getDistance() {
+  async function getRain() {
     try {
-      const resp = (await axios.get("http://localhost:8000/distance/list")).data;
+      const resp = (await axios.get("http://localhost:8000/rain/list")).data;
       setData(resp);
       setError(null);
     } catch (err) {
-      console.error("Failed to fetch distance data:", err);
+      console.error("Failed to fetch rain data:", err);
       setError("Failed to connect to the server. Make sure the backend is running on http://localhost:8000");
     }
   }
 
   useEffect(() => {
-    getDistance();
+    getRain();
     const intervalId = setInterval(() => {
-      getDistance();
+      getRain();
     }, 2000);
     return () => clearInterval(intervalId);
   }, []);
 
-  async function saveDistance() {
+  async function saveHumidity() {
     try {
-      const newDistance = { distance };
-      await axios.post("http://localhost:8000/distance/create", newDistance);
+      const newRain = { rain };
+      await axios.post("http://localhost:8000/rain/create", newRain);
       setError(null);
     } catch (err) {
-      console.error("Failed to save distance data:", err);
+      console.error("Failed to save rain data:", err);
       setError("Failed to save data to the server");
     }
   }
@@ -72,7 +72,7 @@ const DistanceApi = () => {
       )}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data.slice(-15)}
+          data={data}
           margin={{ top: 10, right: 10, left: 10, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
@@ -97,7 +97,7 @@ const DistanceApi = () => {
           <YAxis
             width={60}
             label={{
-              value: "Distance (m)",
+              value: "Voltage (V)",
               angle: -90,
               position: "insideLeft",
               textAnchor: "middle",
@@ -106,8 +106,8 @@ const DistanceApi = () => {
           <Tooltip />
           <Line
             type="monotone"
-            dataKey="distance"
-            stroke="#54FF57"
+            dataKey="rain"
+            stroke="#3DB4FF"
             activeDot={{ r: 8 }}
           />
         </LineChart>
@@ -116,4 +116,4 @@ const DistanceApi = () => {
   );
 };
 
-export default DistanceApi;
+export default RainApi;
