@@ -27,12 +27,12 @@ const DistanceApi = () => {
 
   async function getDistance() {
     try {
-      const resp = (await axios.get("http://localhost:8000/distance/list")).data;
+      const resp = (await axios.get("http://10.48.203.58:8000/distance/list")).data;
       setData(resp);
       setError(null);
     } catch (err) {
       console.error("Failed to fetch distance data:", err);
-      setError("Failed to connect to the server. Make sure the backend is running on http://localhost:8000");
+      setError("Failed to connect to the server. Make sure the backend is running on http://10.48.203.58:8000");
     }
   }
 
@@ -47,7 +47,7 @@ const DistanceApi = () => {
   async function saveDistance() {
     try {
       const newDistance = { distance };
-      await axios.post("http://localhost:8000/distance/create", newDistance);
+      await axios.post("http://10.48.203.58:8000/distance/create", newDistance);
       setError(null);
     } catch (err) {
       console.error("Failed to save distance data:", err);
@@ -72,7 +72,7 @@ const DistanceApi = () => {
       )}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data.slice(-15)}
+          data={data.slice(-20)}
           margin={{ top: 10, right: 10, left: 10, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />

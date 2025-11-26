@@ -27,12 +27,12 @@ const LightApi = () => {
 
   async function getLight() {
     try {
-      const resp = (await axios.get("http://localhost:8000/light/list")).data;
+      const resp = (await axios.get("http://10.48.203.58:8000/light/list")).data;
       setData(resp);
       setError(null);
     } catch (err) {
       console.error("Failed to fetch light data:", err);
-      setError("Failed to connect to the server. Make sure the backend is running on http://localhost:8000");
+      setError("Failed to connect to the server. Make sure the backend is running on http://10.48.203.58:8000");
     }
   }
 
@@ -47,7 +47,7 @@ const LightApi = () => {
   async function saveLight() {
     try {
       const newLight = { light };
-      await axios.post("http://localhost:8000/light/create", newLight);
+      await axios.post("http://10.48.203.58:8000/light/create", newLight);
       setError(null);
     } catch (err) {
       console.error("Failed to save light data:", err);
@@ -72,7 +72,7 @@ const LightApi = () => {
       )}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data}
+          data={data.splice(-20)}
           margin={{ top: 10, right: 10, left: 10, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />

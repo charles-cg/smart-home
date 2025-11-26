@@ -1,12 +1,10 @@
 from typing import Union
-import threading
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from HumidityDTOs import CreateHumidityRequest, HumidityDTO
 from HumidityRepository import HumidityRepository
-from MqttClient import run as mqtt_run
 
 from SmokeDTOs import CreateSmokeRequest, SmokeDTO
 from SmokeRepository import SmokeRepository
@@ -27,16 +25,6 @@ from RainDTOs import CreateRainRequest, RainDTO
 from RainRepository import RainRepository
 
 app = FastAPI()
-
-# Initialize MQTT client on startup
-@app.on_event("startup")
-async def startup_event():
-    """Initialize MQTT client when app starts"""
-    print("🚀 Starting MQTT listener in background thread...")
-    mqtt_thread = threading.Thread(target=mqtt_run, daemon=True)
-    mqtt_thread.start()
-    print("✓ MQTT thread started")
-
 
 origins = [
     "http://localhost:3000",
