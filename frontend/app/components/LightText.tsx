@@ -16,14 +16,14 @@ const LightText = () => {
 
   async function getLight() {
     try {
-      const resp = (await axios.get("http://10.48.203.58:8000/light/list"))
+      const resp = (await axios.get("http://localhost:8000/light/list"))
         .data;
       setData(resp);
       setError(null);
     } catch (err) {
       console.error("Failed to fetch light data:", err);
       setError(
-        "Failed to connect to the server. Make sure the backend is running on http://10.48.203.58:8000"
+        "Failed to connect to the server. Make sure the backend is running on http://localhost:8000"
       );
     }
   }
@@ -40,7 +40,7 @@ const LightText = () => {
     try {
       const newLight = { light };
       await axios.post(
-        "http://10.48.203.58:8000/light/create",
+        "http://localhost:8000/light/create",
         newLight
       );
       setError(null);

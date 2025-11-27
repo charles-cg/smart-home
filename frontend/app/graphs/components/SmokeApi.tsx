@@ -72,7 +72,7 @@ const SmokeApi = () => {
       )}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data}
+          data={data.splice(-20)}
           margin={{ top: 10, right: 10, left: 10, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />
