@@ -72,7 +72,7 @@ const LightApi = () => {
       )}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data.splice(-20)}
+          data={data.slice(-20)}
           margin={{ top: 10, right: 10, left: 10, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />

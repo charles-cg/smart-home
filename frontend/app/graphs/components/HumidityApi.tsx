@@ -40,7 +40,7 @@ const HumidityApi = () => {
     getHumidity();
     const intervalId = setInterval(() => {
       getHumidity();
-    }, 2000);
+    }, 1000);  // Poll every 1 second instead of 2 for faster updates
     return () => clearInterval(intervalId);
   }, []);
 
@@ -72,7 +72,7 @@ const HumidityApi = () => {
       )}
       <ResponsiveContainer width="100%" height={400}>
         <LineChart
-          data={data.splice(-20)}
+          data={data.slice(-20)}  // Use slice instead of splice to avoid mutating original
           margin={{ top: 10, right: 10, left: 10, bottom: 50 }}
         >
           <CartesianGrid strokeDasharray="3 3" />

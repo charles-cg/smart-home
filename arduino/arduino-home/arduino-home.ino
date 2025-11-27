@@ -67,54 +67,57 @@ const char publish_topic_humid[] = "EQ8/humid/message";
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(9600);  //Monitor serial
-  lox.begin();
-  analogReadResolution(14);  
+  Serial.begin(9600);
+  
+  // Initialize I2C first before any I2C sensors
+  Wire.begin();
+  delay(100);
+  
+  // Initialize sensors in proper order
+  Serial.println("Initializing sensors...");
+  
+  // Initialize distance sensor (VL53L0X)
+  if (!lox.begin()) {
+    Serial.println("Failed to initialize VL53L0X distance sensor!");
+  } else {
+    Serial.println("VL53L0X distance sensor OK");
+  }
+  
+  // Initialize BME280
+  bool status = bme.begin(0x76);
+  if (!status) {
+    Serial.println("BME280 not found at 0x76, trying 0x77...");
+    status = bme.begin(0x77);
+  }
+  
+  if (!status) {
+    Serial.println("Could not find BME280 sensor!");
+  } else {
+    Serial.println("BME280 sensor OK");
+    
+    // Configure BME280 settings
+    bme.setSampling(Adafruit_BME280::MODE_NORMAL,
+                    Adafruit_BME280::SAMPLING_X2,
+                    Adafruit_BME280::SAMPLING_X16,
+                    Adafruit_BME280::SAMPLING_X1,
+                    Adafruit_BME280::FILTER_X16,
+                    Adafruit_BME280::STANDBY_MS_500);
+  }
+  
+  // Set analog resolution
+  analogReadResolution(14);
   
   Serial.println("MQ2 Smoke Sensor Initialization");
   Serial.println("Warming up sensor (60 seconds)...");
   
   delay(60000);
   
-  Serial.println("Calibrating sensor in clean air...");
+  Serial.println("Calibrating smoke sensor in clean air...");
   RO = calibrateSensor();
   Serial.print("Calibration complete. RO = ");
   Serial.print(RO);
   Serial.println(" kOhm");
-  Serial.println("Starting measurements...");
   Serial.println();
-
-    Serial.println("BME280 Sensor Test");
-  Serial.println();
-
-  // Initialize I2C
-  Wire.begin();
-
-  // Try to initialize BME280 at address 0x76
-  bool status = bme.begin(0x76);
-  
-  // If not found at 0x76, try 0x77
-  if (!status) {
-    Serial.println("BME280 not found at 0x76, trying 0x77...");
-    status = bme.begin(0x77);
-  }
-
-  if (!status) {
-    Serial.println("Could not find a valid BME280 sensor!");
-    Serial.println("Check wiring and I2C address.");
-    while (1) delay(10);
-  }
-
-  Serial.println("BME280 sensor found and initialized!");
-  Serial.println();
-  
-  // Configure sensor settings (optional)
-  bme.setSampling(Adafruit_BME280::MODE_NORMAL,     // Operating mode
-                  Adafruit_BME280::SAMPLING_X2,      // Temperature oversampling
-                  Adafruit_BME280::SAMPLING_X16,     // Pressure oversampling
-                  Adafruit_BME280::SAMPLING_X1,      // Humidity oversampling
-                  Adafruit_BME280::FILTER_X16,       // Filtering
-                  Adafruit_BME280::STANDBY_MS_500);  // Standby time
 
   while (!Serial) {
     ; 
@@ -259,11 +262,35 @@ void loop() {
   humidity = bme.readHumidity();
   pressure = bme.readPressure() / 100.0F;  // Convert Pa to hPa
 
-  // Check if readings are valid
-  if (isnan(temperature) || isnan(humidity) || isnan(pressure)) {
-    Serial.println("Failed to read from BME280 sensor!");
-    return;
+  // Display BME280 readings
+  Serial.println("--- BME280 Readings ---");
+  Serial.print("Temperature: ");
+  if (!isnan(temperature)) {
+    Serial.print(temperature);
+    Serial.println(" °C");
+  } else {
+    Serial.println("ERROR");
+    temperature = 0.0;
   }
+  
+  Serial.print("Humidity: ");
+  if (!isnan(humidity)) {
+    Serial.print(humidity);
+    Serial.println(" %");
+  } else {
+    Serial.println("ERROR");
+    humidity = 0.0;
+  }
+  
+  Serial.print("Pressure: ");
+  if (!isnan(pressure)) {
+    Serial.print(pressure);
+    Serial.println(" hPa");
+  } else {
+    Serial.println("ERROR");
+    pressure = 0.0;
+  }
+  Serial.println("----------------------");
 
   int messageSize = mqttClient.parseMessage();
   if (messageSize) {
@@ -281,46 +308,29 @@ void loop() {
     Serial.println();
   }
 
-  // send message, the Print interface can be used to set the message contents
-  delay(2000);
+  // send message as single JSON payload to reduce latency
   Serial.println("sending to mqtt!");
 
-  // Only send valid distance readings
-  if (distance_mm > 0) {
-    mqttClient.beginMessage(publish_topic_dist);
-    mqttClient.println(distance_mm);
-    mqttClient.endMessage();
-  }
-
-  delay(2000);
-  mqttClient.beginMessage(publish_topic_light);
-  mqttClient.println(photoVoltage);
+  mqttClient.beginMessage("EQ8/sensors/data");
+  mqttClient.print("{");
+  mqttClient.print("\"distance\":");
+  mqttClient.print(distance_mm);
+  mqttClient.print(",\"light\":");
+  mqttClient.print(photoVoltage, 2);
+  mqttClient.print(",\"rain\":");
+  mqttClient.print(rainVPercentage);
+  mqttClient.print(",\"smoke\":");
+  mqttClient.print(smoke_ppm, 2);
+  mqttClient.print(",\"temperature\":");
+  mqttClient.print(temperature, 2);
+  mqttClient.print(",\"pressure\":");
+  mqttClient.print(pressure, 2);
+  mqttClient.print(",\"humidity\":");
+  mqttClient.print(humidity, 2);
+  mqttClient.print("}");
   mqttClient.endMessage();
-
-  delay(2000);
-  mqttClient.beginMessage(publish_topic_rain);
-  mqttClient.println(rainVPercentage);
-  mqttClient.endMessage();
-
-  delay(2000);
-  mqttClient.beginMessage(publish_topic_smoke);
-  mqttClient.println(smoke_ppm);
-  mqttClient.endMessage();
-
-  delay(2000);
-  mqttClient.beginMessage(publish_topic_temp);
-  mqttClient.println(temperature);
-  mqttClient.endMessage();
-
-  delay(2000);
-  mqttClient.beginMessage(publish_topic_press);
-  mqttClient.println(pressure);
-  mqttClient.endMessage();
-
-  delay(2000);
-  mqttClient.beginMessage(publish_topic_humid);
-  mqttClient.println(humidity);
-  mqttClient.endMessage();
+  
+  delay(1000);  // Send every second instead of 14+ seconds
 }
 
 // Calibrate sensor in clean air
