@@ -1,0 +1,3 @@
+This is the plan 
+using the code from arduino-home to receive messages from the readings using mqtt client. 
+Then in order to test each of the home features and easily troubleshoot we are going to implement each of the features to a new .ino file one by one, first start by implementing the BME280 functionality of the alarm for the wine cellar

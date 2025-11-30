@@ -1,14 +1,28 @@
+// Librerías
 #include "WiFiS3.h"
 #include <ArduinoMqttClient.h>
-//Sensor de distancia
-#include "Adafruit_VL53L0X.h"  //Importa libreria
+#include <Wire.h>               // Habilita el bus I2C (usado por BME280, OLED, VL53L0X, LCD I2C)
+#include <Adafruit_Sensor.h>    // Librería base de sensores Adafruit
+#include <Adafruit_BME280.h>    // Librería del sensor BME280
+#include <Adafruit_GFX.h>       // Librería gráfica base
+#include <Adafruit_SSD1306.h>   // Librería para la pantalla OLED
+#include <Adafruit_VL53L0X.h>   // Librería para el sensor de distancia VL53L0X
+#include <Servo.h>              // Librería para controlar servos
+#include <LiquidCrystal_I2C.h>  // Librería para LCD por I2C (16x2)
 
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BME280.h>
+// OLED (pantalla principal)
+#define OLED_WIDTH 128          // Ancho de la OLED en pixeles
+#define OLED_HEIGHT 64          // Alto de la OLED
+#define OLED_ADDR 0x3C          // Dirección I2C típica de la OLED
+Adafruit_SSD1306 oled(OLED_WIDTH, OLED_HEIGHT, &Wire); // Objeto OLED usando I2C
 
-// Create BME280 object
-Adafruit_BME280 bme;
+// LCD (pantalla de la cava en la cocina)
+LiquidCrystal_I2C lcd(0x27, 16, 2); // LCD I2C en dirección 0x27, de 16 columnas x 2 filas
+
+
+// Sensores
+Adafruit_BME280 bme;             // Sensor BME280 (usado para la cava de vino)
+Adafruit_VL53L0X vl53 = Adafruit_VL53L0X();  // Sensor de distancia VL53L0X (cochera)
 
 // Variables to store sensor readings
 float temperature = 0.0;
@@ -38,7 +52,7 @@ int rainVPercentage = 0;
 int photoValue = 0;
 float photoVoltage = 0.0;
 
-Adafruit_VL53L0X lox = Adafruit_VL53L0X();  //Declara el objeto para usar el sensor
+
 
 char ssid[] = "Tec-IoT";    // your network SSID (name)
 char pass[] = "spotless.magnetic.bridge";    // your network password 
@@ -50,20 +64,8 @@ const char broker[] = "test.mosquitto.org"; //IP address of the EMQX broker.
 int        port     = 1883;
 
 const char subscribe_topic_dist[]  = "EQ8/dist/log";
-const char subscribe_topic_light[] = "EQ8/light/log";
-const char subscribe_topic_rain[] = "EQ8/rain/log";
-const char subscribe_topic_smoke[] = "EQ8/smoke/log";
-const char subscribe_topic_temp[] = "EQ8/temp/log";
-const char subscribe_topic_press[] = "EQ8/press/log";
-const char subscribe_topic_humid[] = "EQ8/humid/log";
 
 const char publish_topic_dist[]  = "EQ8/dist/message";
-const char publish_topic_light[] = "EQ8/light/message";
-const char publish_topic_rain[] = "EQ8/rain/message";
-const char publish_topic_smoke[] = "EQ8/smoke/message";
-const char publish_topic_temp[] = "EQ8/temp/message";
-const char publish_topic_press[] = "EQ8/press/message";
-const char publish_topic_humid[] = "EQ8/humid/message";
 
 void setup() {
   // put your setup code here, to run once:
