@@ -10,15 +10,15 @@ from PressureRepository import PressureRepository
 from HumidityRepository import HumidityRepository
 
 def on_connect(client, userdata, flags, rc):
-    print('✓ Connected to MQTT Broker (%s)' % client._client_id)
-    # Subscribe to single consolidated topic
-    client.subscribe(topic = 'EQ8/sensors/data', qos = 1)  # QoS 1 is faster than 2
-    print('✓ Subscribed to EQ8/sensors/data')
+    print('Connected to MQTT Broker (%s)' % client._client_id)
+    #topic receives a JSON formatted message
+    client.subscribe(topic = 'EQ8/sensors/data', qos = 1)
+    print('Subscribed to EQ8/sensors/data')
 
 def on_message(client, userdata, message):
     try:
         payload_str = message.payload.decode('utf-8').strip()
-        print(f'📨 Received: {payload_str}')
+        print(f'Received: {payload_str}')
         
         # Parse JSON
         data = json.loads(payload_str)
@@ -45,12 +45,12 @@ def on_message(client, userdata, message):
         if 'humidity' in data:
             HumidityRepository().insert_data(data['humidity'])
             
-        print('✅ Data saved successfully')
+        print('Data inserted into DB')
         
     except json.JSONDecodeError as e:
-        print(f'✗ JSON parse error: {e}')
+        print(f'Error JSON decoding: {e}')
     except Exception as e:
-        print(f'✗ Error: {e}')
+        print(f'Error: {e}')
 
 
 

@@ -8,8 +8,8 @@
 #include <Servo.h>              // Librería para controlar servos
 
 // WiFi y MQTT
-char ssid[] = "Nihon";
-char pass[] = "Ximena10@";
+char ssid[] = "Tec-IoT";
+char pass[] = "spotless.magnetic.bridge";
 WiFiClient wifiClient;
 MqttClient mqttClient(wifiClient);
 const char broker[] = "test.mosquitto.org";
@@ -34,10 +34,8 @@ const int PIN_RAIN = A1;              // Sensor de lluvia
 const int PIN_SERVO_TECHO = 10;       // Servo del techo
 const int RAIN_UMBRAL_MOJADO = 600;   // Umbral para detectar lluvia
 
-// Servo del techo
+// Servo del techo (rotación continua)
 Servo servoTecho;
-const int TECHO_CERRADO = 0;    // Techo cerrado (0 grados)
-const int TECHO_ABIERTO = 30;   // Techo abierto (30 grados)
 bool techoCerrado = true;       // Estado del techo
 
 int rainValue = 0;
@@ -45,9 +43,9 @@ float rainVoltage = 0.0;
 int rainPercentage = 0;
 
 // Sistema de seguridad con láser
-const int PIN_LASER_EMITTER = 6;    // Emisor láser HW-493
+const int PIN_LASER_EMITTER = 8;    // Emisor láser HW-493
 const int PIN_LASER_SENSOR = A3;    // Fotoresistor que recibe el láser
-const int PIN_BTN_SEGURIDAD = 1;    // Botón para activar/desactivar seguridad
+const int PIN_BTN_SEGURIDAD = 12;    // Botón para activar/desactivar seguridad
 
 // Constantes MQ2
 const float RL_VALUE = 5.0;
@@ -59,7 +57,7 @@ float ratio;
 float smoke_ppm = 0.0;
 
 // Pin del buzzer para alarma
-const int PIN_BUZZER = 8;
+const int PIN_BUZZER = 13;
 
 // Umbrales ideales para cava de vino
 const float TEMP_MIN = 10.0;   // °C - temperatura mínima ideal
@@ -106,29 +104,42 @@ void enviarDatosViaJSON();
 
 void setup() {
   Serial.begin(9600);
+  delay(1000);  // Esperar a que el Serial Monitor se conecte
+  
+  Serial.println("\n\n======================");
+  Serial.println("Smart Home v2 Starting...");
+  Serial.println("======================\n");
   
   // Configuración de pines
   pinMode(PIN_BUZZER, OUTPUT);
   pinMode(PIN_LASER_EMITTER, OUTPUT);
   pinMode(PIN_BTN_SEGURIDAD, INPUT_PULLUP);
   digitalWrite(PIN_LASER_EMITTER, LOW);  // Láser apagado al inicio
+  
+  Serial.println("Pins configured");
 
   // Inicializar servo del techo
+  Serial.println("Initializing servo...");
   servoTecho.attach(PIN_SERVO_TECHO);
-  servoTecho.write(TECHO_CERRADO);  // Iniciar cerrado
+  servoTecho.write(90);  // Iniciar detenido (90 = stop para servo continuo)
+  Serial.println("Servo initialized");
 
   // Set analog resolution
+  Serial.println("Setting analog resolution...");
   analogReadResolution(14);
+  Serial.println("Analog resolution set");
 
   // Inicia I2C
+  Serial.println("Starting I2C...");
   Wire.begin();
   delay(100);
+  Serial.println("I2C started");
 
   // Inicializar LCD
+  Serial.println("Initializing LCD...");
   lcd.init();        // Inicializar LCD
   lcd.backlight();   // Encender backlight
   lcd.clear();
-  delay(100);
   lcd.setCursor(0, 0);
   lcd.print("Cava de vino");
   lcd.setCursor(0, 1);
@@ -169,11 +180,19 @@ void setup() {
   // Conectar WiFi
   Serial.print("Attempting to connect to WiFi: ");
   Serial.println(ssid);
+  int wifiAttempts = 0;
   while (WiFi.begin(ssid, pass) != WL_CONNECTED) {
     Serial.print(".");
+    wifiAttempts++;
+    if (wifiAttempts > 10) {
+      Serial.println("\nWiFi connection failed after 10 attempts, continuing anyway...");
+      break;
+    }
     delay(5000);
   }
-  Serial.println("\nYou're connected to the network");
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nYou're connected to the network");
+  }
 
   // Conectar MQTT
   Serial.print("Attempting to connect to MQTT broker: ");
@@ -355,21 +374,17 @@ void verificarLluvia() {
 }
 
 void abrirTecho() {
-  // Mover lentamente de 0 a 30 grados
-  for (int pos = TECHO_CERRADO; pos <= TECHO_ABIERTO; pos += 2) {
-    servoTecho.write(pos);
-    delay(50);  // Movimiento lento
-  }
-  servoTecho.write(TECHO_ABIERTO);
+  // Para servo de rotación continua: girar en una dirección por tiempo fijo
+  servoTecho.write(100);  // Girar lentamente en una dirección (90-180 = clockwise)
+  delay(3600);            // Tiempo para 180 grados
+  servoTecho.write(90);   // Detener (90 = stop para servos continuos)
 }
 
 void cerrarTecho() {
-  // Mover lentamente de 30 a 0 grados
-  for (int pos = TECHO_ABIERTO; pos >= TECHO_CERRADO; pos -= 2) {
-    servoTecho.write(pos);
-    delay(50);  // Movimiento lento
-  }
-  servoTecho.write(TECHO_CERRADO);
+  // Para servo de rotación continua: girar en dirección opuesta
+  servoTecho.write(80);   // Girar lentamente en dirección contraria (0-90 = counterclockwise)
+  delay(3600);            // Tiempo para volver 180 grados
+  servoTecho.write(90);   // Detener (90 = stop)
 }
 
 void verificarSeguridad() {
